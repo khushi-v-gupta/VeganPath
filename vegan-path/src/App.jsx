@@ -12,6 +12,8 @@ import Progress from "./pages/Progress";
 import Ayurveda from "./pages/Ayurveda";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import FoodScanner from "./components/FoodScanner";
+import RecipeDetails from "./pages/RecipeDetails";
 
 function App() {
   return (
@@ -35,10 +37,12 @@ function App() {
           <Route path="/progress" element={<Progress />} />
           <Route path="/ayurveda" element={<Ayurveda />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
         </Routes>
       </main>
 
       <Footer />
+      <FoodScanner />
     </>
   );
 }

@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 
 function Recipes() {
+  const getYouTubeSearchUrl = (recipe) => {
+    const query = `${recipe.title} ${recipe.cuisine || ""} vegan recipe`;
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  };
+
+  const navigate = useNavigate();
+
   const [ingredients, setIngredients] = useState("");
   const [cuisine, setCuisine] = useState("Indian");
   const [mealType, setMealType] = useState("Dinner");
@@ -18,6 +26,11 @@ function Recipes() {
   const [query, setQuery] = useState("");
   const [nutritionData, setNutritionData] = useState([]);
   const [nutritionLoading, setNutritionLoading] = useState(true);
+
+  const [recipes, setRecipes] = useState([]);
+  const [recipesLoading, setRecipesLoading] = useState(true);
+  const [recipeSearch, setRecipeSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchDailyRecipe = async () => {
@@ -115,6 +128,56 @@ function Recipes() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        setRecipesLoading(true);
+
+        const params = new URLSearchParams();
+
+        if (recipeSearch.trim()) {
+          params.append("search", recipeSearch.trim());
+        }
+
+        if (selectedCategory) {
+          if (
+            ["Breakfast", "Lunch", "Dinner", "Snack"].includes(selectedCategory)
+          ) {
+            params.append("mealType", selectedCategory);
+          } else if (selectedCategory !== "All") {
+            params.append("cuisine", selectedCategory);
+          }
+        }
+
+        const url = `http://localhost:5000/api/recipes${
+          params.toString() ? `?${params.toString()}` : ""
+        }`;
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load recipes");
+        }
+
+        setRecipes(data.recipes || []);
+      } catch (error) {
+        console.error("RECIPE LIBRARY ERROR:", error);
+        setRecipes([]);
+      } finally {
+        setRecipesLoading(false);
+      }
+    };
+
+    // Wait until the user stops typing
+    const timer = setTimeout(() => {
+      fetchRecipes();
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [recipeSearch, selectedCategory]);
 
   return (
     <div className="page-container">
@@ -445,6 +508,20 @@ function Recipes() {
             </ol>
           </div>
 
+          {/* yt link for recipe  */}
+          <div className="video-section">
+            <p>🎥 Want to see how it's prepared?</p>
+
+            <a
+              href={getYouTubeSearchUrl(aiRecipe)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="watch-video-btn"
+            >
+              ▶ Watch Recipe Videos on YouTube
+            </a>
+          </div>
+
           {/* NUTRITION */}
           <div className="nutrition-section">
             <h3>📊 Nutritional Value Per Serving</h3>
@@ -489,73 +566,88 @@ function Recipes() {
         </div>
       )}
 
-      {/* SEARCH */}
-      <div className="search-box">
-        <input type="text" placeholder="Search recipes..." />
-
-        <button>🔍 Search</button>
-      </div>
-
-      {/* CATEGORIES */}
-      <div className="category-buttons">
-        <button className="active">All</button>
-        <button>Breakfast</button>
-        <button>Lunch</button>
-        <button>Dinner</button>
-        <button>Snacks</button>
-        <button>Indian</button>
-        <button>High Protein</button>
-      </div>
-
       {/* EXISTING RECIPES */}
-      <div className="recipe-grid">
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1547592180-85f173990554"
-          title="Rainbow Buddha Bowl"
-          category="Lunch"
-          time="20 min"
-          calories="420"
-        />
+      {/* RECIPE LIBRARY */}
 
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
-          title="Green Power Salad"
-          category="Healthy"
-          time="15 min"
-          calories="280"
-        />
+      <div className="recipe-library-section">
+        <div className="recipe-library-heading">
+          <span>🍽️ RECIPE LIBRARY</span>
 
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1601050690597-df0568f70950"
-          title="Vegetable Dumplings"
-          category="Dinner"
-          time="35 min"
-          calories="390"
-        />
+          <h2>Explore Vegan Recipes</h2>
 
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1603133872878-684f208fb84b"
-          title="Vegetable Fried Rice"
-          category="Asian"
-          time="25 min"
-          calories="410"
-        />
+          <p>
+            Discover recipes from your personalized vegan recipe collection.
+          </p>
+        </div>
 
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1547592166-23ac45744acd"
-          title="Creamy Lentil Soup"
-          category="High Protein"
-          time="30 min"
-          calories="350"
-        />
+        {/* SEARCH */}
 
-        <RecipeCard
-          image="https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7"
-          title="Indian Vegetable Curry"
-          category="Indian"
-          time="40 min"
-          calories="430"
-        />
+        <div className="search-box">
+          <input
+            type="text"
+            value={recipeSearch}
+            onChange={(e) => setRecipeSearch(e.target.value)}
+            placeholder="Search recipes..."
+          />
+
+          <button onClick={() => setRecipeSearch(recipeSearch.trim())}>
+            🔍 Search
+          </button>
+        </div>
+
+        {/* CATEGORIES */}
+
+        <div className="category-buttons">
+          {[
+            "All",
+            "Breakfast",
+            "Lunch",
+            "Dinner",
+            "Snack",
+            "Indian",
+            "Asian",
+            "Italian",
+            "Mexican",
+            "Thai",
+            "Japanese",
+          ].map((category) => (
+            <button
+              key={category}
+              className={
+                selectedCategory === category ||
+                (category === "All" && selectedCategory === "")
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                setSelectedCategory(category === "All" ? "" : category)
+              }
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* RECIPES */}
+
+        <div className="recipe-grid">
+          {recipesLoading && recipes.length === 0 && (
+            <div className="nutrition-loading">🌱 Loading recipes...</div>
+          )}
+
+          {!recipesLoading && recipes.length === 0 && (
+            <div className="nutrition-loading">🍽️ No recipes found.</div>
+          )}
+
+          {!recipesLoading &&
+            recipes.map((recipe) => (
+              <RecipeCard
+                key={recipe._id}
+                recipe={recipe}
+                onView={(recipeId) => navigate(`/recipe/${recipeId}`)}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

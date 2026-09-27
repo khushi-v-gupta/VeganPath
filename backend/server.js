@@ -2,14 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+
+dotenv.config();
+
 const authRoutes = require("./routes/authRoutes");
 const recipeRoutes = require("./routes/recipeRoutes");
 const nutritionRoutes = require("./routes/nutritionRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const ayurvedaRoutes = require("./routes/ayurvedaRoutes");
 const mealPlanRoutes = require("./routes/mealPlanRoutes");
+const scannerRoutes = require("./routes/scanner");
 
-dotenv.config();
+
 
 const app = express();
 
@@ -22,6 +26,7 @@ app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/ayurveda", ayurvedaRoutes);
 app.use("/api/meal-plan", mealPlanRoutes);
+app.use("/api/scanner", scannerRoutes);
 
 // Test route
 app.get("/", (req, res) => {

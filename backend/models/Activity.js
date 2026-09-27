@@ -25,7 +25,7 @@ const activitySchema = new mongoose.Schema(
 
     waterGoal: {
       type: Number,
-      default: 8,
+      default: 12,
     },
 
     exercise: {

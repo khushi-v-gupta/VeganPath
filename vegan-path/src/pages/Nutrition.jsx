@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
+import "./Nutrition.css";
 
 function Nutrition() {
   const [nutritionData, setNutritionData] = useState([]);
   const [selectedCuisine, setSelectedCuisine] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // ==========================================
-  // FETCH NUTRITION DATA
-  // ==========================================
 
   useEffect(() => {
     const fetchNutrition = async () => {
@@ -25,18 +22,14 @@ function Nutrition() {
           );
         }
 
-        // Backend returns { nutrition: [...] }
         setNutritionData(data.nutrition || []);
 
-        // Select first cuisine automatically
         if (data.nutrition && data.nutrition.length > 0) {
           setSelectedCuisine(data.nutrition[0].cuisine);
         }
-
       } catch (error) {
         console.error("NUTRITION FETCH ERROR:", error);
         setError(error.message);
-
       } finally {
         setLoading(false);
       }
@@ -45,514 +38,290 @@ function Nutrition() {
     fetchNutrition();
   }, []);
 
-
-  // ==========================================
-  // LOADING
-  // ==========================================
-
   if (loading) {
     return (
-      <div className="page-container">
-
-        <div className="page-heading">
-
-          <span>PERSONALIZED NUTRITION</span>
-
-          <h1>
-            Nourish Your Body 🌱
-          </h1>
-
-          <p>
-            Loading nutrition data...
-          </p>
-
+      <div className="nutrition-page">
+        <div className="nutrition-loading">
+          <div className="loading-icon">🌱</div>
+          <h2>Preparing your nutrition...</h2>
+          <p>Loading personalized nutrition information</p>
         </div>
-
       </div>
     );
   }
-
-
-  // ==========================================
-  // ERROR
-  // ==========================================
 
   if (error) {
     return (
-      <div className="page-container">
-
-        <div className="page-heading">
-
-          <span>PERSONALIZED NUTRITION</span>
-
-          <h1>
-            Nourish Your Body 🌱
-          </h1>
-
-          <p>
-            Unable to load nutrition data.
-          </p>
-
-          <p>
-            {error}
-          </p>
-
+      <div className="nutrition-page">
+        <div className="nutrition-error">
+          <div className="error-icon">⚠️</div>
+          <h2>Unable to load nutrition</h2>
+          <p>{error}</p>
         </div>
-
       </div>
     );
   }
-
-
-  // ==========================================
-  // NO DATA
-  // ==========================================
 
   if (nutritionData.length === 0) {
     return (
-      <div className="page-container">
-
-        <div className="page-heading">
-
-          <span>PERSONALIZED NUTRITION</span>
-
-          <h1>
-            Nourish Your Body 🌱
-          </h1>
-
+      <div className="nutrition-page">
+        <div className="nutrition-empty">
+          <div>🥗</div>
+          <h2>No nutrition data available</h2>
           <p>
-            No nutrition data is available yet.
+            Nutrition information will appear here once data is
+            available.
           </p>
-
         </div>
-
-        <div className="info-card">
-
-          <div>
-            <span>🥗</span>
-          </div>
-
-          <div>
-
-            <h2>
-              Nutrition data not found
-            </h2>
-
-            <p>
-              Add nutrition profiles to your MongoDB
-              Nutrition collection to display them here.
-            </p>
-
-          </div>
-
-        </div>
-
       </div>
     );
   }
-
-
-  // ==========================================
-  // FIND SELECTED CUISINE
-  // ==========================================
 
   const nutrition = nutritionData.find(
     (item) =>
-      item.cuisine.toLowerCase() ===
-      selectedCuisine.toLowerCase()
+      item.cuisine.toLowerCase() === selectedCuisine.toLowerCase()
   );
 
+  if (!nutrition) return null;
 
-  // ==========================================
-  // SAFETY CHECK
-  // ==========================================
-
-  if (!nutrition) {
-    return (
-      <div className="page-container">
-
-        <div className="page-heading">
-
-          <h1>
-            Nutrition data unavailable 🌱
-          </h1>
-
-        </div>
-
-      </div>
-    );
-  }
-
+  const macros = [
+    {
+      name: "Protein",
+      value: nutrition.protein,
+      unit: "g",
+      percentage: Math.min(nutrition.protein * 3, 100),
+      icon: "💪",
+    },
+    {
+      name: "Carbohydrates",
+      value: nutrition.carbohydrates,
+      unit: "g",
+      percentage: Math.min(nutrition.carbohydrates * 1.3, 100),
+      icon: "🌾",
+    },
+    {
+      name: "Healthy Fats",
+      value: nutrition.fat,
+      unit: "g",
+      percentage: Math.min(nutrition.fat * 2.5, 100),
+      icon: "🥑",
+    },
+    {
+      name: "Fiber",
+      value: nutrition.fiber,
+      unit: "g",
+      percentage: Math.min(nutrition.fiber * 5, 100),
+      icon: "🌱",
+    },
+  ];
 
   return (
-    <div className="page-container">
+    <div className="nutrition-page">
 
-      {/* ==========================================
-          PAGE HEADING
-      ========================================== */}
+      {/* HERO */}
+      <section className="nutrition-hero">
+        <div className="hero-content">
+          <span className="eyebrow">VEGAN PATH • NUTRITION</span>
 
-      <div className="page-heading">
+          <h1>
+            Nourish your body,
+            <br />
+            <span>the plant-powered way.</span>
+          </h1>
 
-        <span>
-          PERSONALIZED NUTRITION
-        </span>
+          <p>
+            Explore nutritional profiles across cuisines and
+            understand what your food brings to your plate.
+          </p>
+        </div>
 
-        <h1>
-          Nourish Your Body 🌱
-        </h1>
+        <div className="hero-decoration">
+          <span>🥑</span>
+          <span>🥬</span>
+          <span>🫘</span>
+          <span>🌱</span>
+        </div>
+      </section>
 
-        <p>
-          Explore nutritional values across different
-          vegan cuisines and understand what your body needs.
-        </p>
+      {/* CUISINE TABS */}
+      <section className="cuisine-section">
+        <div className="section-title">
+          <span>EXPLORE</span>
+          <h2>Choose a cuisine</h2>
+        </div>
 
-      </div>
-
-
-      {/* ==========================================
-          CUISINE SELECTOR
-      ========================================== */}
-
-      <div className="cuisine-selector">
-
-        <h2>
-          Explore Cuisine Nutrition
-        </h2>
-
-        <div className="category-buttons">
-
+        <div className="cuisine-tabs">
           {nutritionData.map((item) => (
-
             <button
               key={item._id}
               className={
                 selectedCuisine === item.cuisine
-                  ? "active"
-                  : ""
+                  ? "cuisine-tab active"
+                  : "cuisine-tab"
               }
-              onClick={() =>
-                setSelectedCuisine(item.cuisine)
-              }
+              onClick={() => setSelectedCuisine(item.cuisine)}
             >
               {item.cuisine}
             </button>
-
           ))}
-
         </div>
+      </section>
 
-      </div>
+      {/* MAIN NUTRITION CARD */}
+      <section className="nutrition-main-card">
 
+        {/* LEFT */}
+        <div className="nutrition-overview">
 
-      {/* ==========================================
-          SELECTED CUISINE
-      ========================================== */}
+          <div className="overview-top">
+            <div>
+              <span className="cuisine-label">
+                {selectedCuisine.toUpperCase()} CUISINE
+              </span>
 
-      <div className="nutrition-summary">
+              <h2>Nutrition Profile</h2>
 
-        <div className="nutrition-main">
+              <p>{nutrition.description}</p>
+            </div>
 
-          <span className="section-label">
-            {selectedCuisine.toUpperCase()} CUISINE
-          </span>
+            <div className="calorie-display">
+              <div className="calorie-number">
+                {nutrition.calories}
+              </div>
 
-          <h2>
-            Nutritional Profile
-          </h2>
-
-          <div className="calorie-circle">
-
-            <strong>
-              {nutrition.calories}
-            </strong>
-
-            <span>
-              kcal
-            </span>
-
+              <div className="calorie-unit">
+                kcal
+                <span>per serving</span>
+              </div>
+            </div>
           </div>
 
-
-          {/* ==========================================
-              MACROS
-          ========================================== */}
-
+          {/* MACROS */}
           <div className="macro-grid">
+            {macros.map((macro) => (
+              <div className="macro-card" key={macro.name}>
 
-            {/* PROTEIN */}
+                <div className="macro-icon">
+                  {macro.icon}
+                </div>
 
-            <div>
+                <div className="macro-info">
+                  <span>{macro.name}</span>
 
-              <span>
-                Protein
-              </span>
+                  <strong>
+                    {macro.value}
+                    <small>{macro.unit}</small>
+                  </strong>
+                </div>
 
-              <strong>
-                {nutrition.protein}g
-              </strong>
-
-              <div className="small-progress">
-
-                <div
-                  style={{
-                    width: `${Math.min(
-                      nutrition.protein * 3,
-                      100
-                    )}%`,
-                  }}
-                ></div>
-
-              </div>
-
-            </div>
-
-
-            {/* CARBOHYDRATES */}
-
-            <div>
-
-              <span>
-                Carbohydrates
-              </span>
-
-              <strong>
-                {nutrition.carbohydrates}g
-              </strong>
-
-              <div className="small-progress">
-
-                <div
-                  style={{
-                    width: `${Math.min(
-                      nutrition.carbohydrates * 1.3,
-                      100
-                    )}%`,
-                  }}
-                ></div>
+                <div className="macro-progress">
+                  <div
+                    style={{
+                      width: `${macro.percentage}%`,
+                    }}
+                  />
+                </div>
 
               </div>
-
-            </div>
-
-
-            {/* FAT */}
-
-            <div>
-
-              <span>
-                Fats
-              </span>
-
-              <strong>
-                {nutrition.fat}g
-              </strong>
-
-              <div className="small-progress">
-
-                <div
-                  style={{
-                    width: `${Math.min(
-                      nutrition.fat * 2.5,
-                      100
-                    )}%`,
-                  }}
-                ></div>
-
-              </div>
-
-            </div>
-
-
-            {/* FIBER */}
-
-            <div>
-
-              <span>
-                Fiber
-              </span>
-
-              <strong>
-                {nutrition.fiber}g
-              </strong>
-
-              <div className="small-progress">
-
-                <div
-                  style={{
-                    width: `${Math.min(
-                      nutrition.fiber * 5,
-                      100
-                    )}%`,
-                  }}
-                ></div>
-
-              </div>
-
-            </div>
-
+            ))}
           </div>
-
         </div>
 
+        {/* RIGHT */}
+        <div className="key-nutrients">
 
-        {/* ==========================================
-            IMPORTANT NUTRIENTS
-        ========================================== */}
+          <div className="key-header">
+            <span>ESSENTIAL</span>
+            <h3>Key Nutrients</h3>
+          </div>
 
-        <div className="nutrition-side">
-
-          <h2>
-            Important Nutrients
-          </h2>
-
-
-          {/* IRON */}
-
-          <div className="nutrient-item">
-
-            <span>
+          <div className="nutrient-card">
+            <div className="nutrient-icon iron">
               🩸
-            </span>
-
-            <div>
-
-              <strong>
-                Iron
-              </strong>
-
-              <p>
-                {nutrition.iron} mg per serving
-              </p>
-
             </div>
 
+            <div>
+              <span>Iron</span>
+              <strong>{nutrition.iron} mg</strong>
+              <small>per serving</small>
+            </div>
           </div>
 
-
-          {/* CALCIUM */}
-
-          <div className="nutrient-item">
-
-            <span>
+          <div className="nutrient-card">
+            <div className="nutrient-icon calcium">
               🦴
-            </span>
-
-            <div>
-
-              <strong>
-                Calcium
-              </strong>
-
-              <p>
-                {nutrition.calcium} mg per serving
-              </p>
-
             </div>
 
+            <div>
+              <span>Calcium</span>
+              <strong>{nutrition.calcium} mg</strong>
+              <small>per serving</small>
+            </div>
           </div>
 
-
-          {/* PROTEIN */}
-
-          <div className="nutrient-item">
-
-            <span>
+          <div className="nutrient-card">
+            <div className="nutrient-icon protein">
               💪
-            </span>
-
-            <div>
-
-              <strong>
-                Protein
-              </strong>
-
-              <p>
-                {nutrition.protein}g per serving
-              </p>
-
             </div>
 
+            <div>
+              <span>Protein</span>
+              <strong>{nutrition.protein} g</strong>
+              <small>per serving</small>
+            </div>
           </div>
 
-
-          {/* FIBER */}
-
-          <div className="nutrient-item">
-
-            <span>
+          <div className="nutrient-card">
+            <div className="nutrient-icon fiber">
               🌾
-            </span>
-
-            <div>
-
-              <strong>
-                Fiber
-              </strong>
-
-              <p>
-                {nutrition.fiber}g per serving
-              </p>
-
             </div>
 
+            <div>
+              <span>Fiber</span>
+              <strong>{nutrition.fiber} g</strong>
+              <small>per serving</small>
+            </div>
           </div>
 
         </div>
+      </section>
 
-      </div>
+      {/* BOTTOM CARDS */}
+      <section className="nutrition-bottom">
 
+        <div className="nutrition-tip-card">
+          <div className="tip-icon">💡</div>
 
-      {/* ==========================================
-          CUISINE DESCRIPTION
-      ========================================== */}
+          <div>
+            <span>VEGAN PATH TIP</span>
 
-      <div className="info-card">
+            <h3>Make your nutrients work together</h3>
 
-        <div>
-          <span>🌾</span>
+            <p>
+              Pair iron-rich foods such as lentils, beans and
+              spinach with vitamin-C-rich foods such as tomatoes,
+              oranges and peppers to support iron absorption.
+            </p>
+          </div>
         </div>
 
-        <div>
+        <div className="nutrition-note-card">
+          <div className="note-icon">🌱</div>
 
-          <h2>
-            Why {selectedCuisine} Cuisine?
-          </h2>
+          <div>
+            <span>YOUR PLANT-BASED JOURNEY</span>
 
-          <p>
-            {nutrition.description}
-          </p>
+            <h3>Small choices add up</h3>
 
+            <p>
+              A balanced variety of legumes, whole grains,
+              vegetables, fruits, nuts and seeds can help create
+              diverse plant-based meals.
+            </p>
+          </div>
         </div>
 
-      </div>
-
-
-      {/* ==========================================
-          PERSONALIZED TIP
-      ========================================== */}
-
-      <div className="info-card">
-
-        <div>
-          <span>💡</span>
-        </div>
-
-        <div>
-
-          <h2>
-            Personalized Tip
-          </h2>
-
-          <p>
-            Pairing iron-rich foods such as lentils,
-            beans and spinach with vitamin-C-rich foods
-            such as tomatoes, oranges and peppers can
-            help improve iron absorption.
-          </p>
-
-        </div>
-
-      </div>
+      </section>
 
     </div>
   );

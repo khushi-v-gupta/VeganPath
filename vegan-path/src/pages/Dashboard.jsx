@@ -122,7 +122,13 @@ function Dashboard() {
       : 0;
 
   const water = activity?.water ?? 0;
-  const waterGoal = activity?.waterGoal ?? 8;
+  const waterGoal = activity?.waterGoal ?? 12;
+
+  console.log("WATER DEBUG:", {
+  water: water,
+  waterGoal: waterGoal,
+  activity: activity
+});
 
   const veganMeals = activity?.veganMeals ?? 0;
   const streak = activity?.streak ?? 0;
@@ -265,7 +271,7 @@ function Dashboard() {
                 <span>💧</span>
 
                 <p>
-                  Drink 8 glasses of water
+                  Drink 12 glasses of water
                 </p>
 
                 <strong>
