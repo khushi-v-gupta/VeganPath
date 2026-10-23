@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
+import API_URL from "../api";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ function Dashboard() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:5000/api/activity/today",
+          `${API_URL}/api/activity/today`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:5000/api/activity/today",
+        `${API_URL}/api/activity/today`,
         {
           method: "PUT",
           headers: {

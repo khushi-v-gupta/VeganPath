@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function Ayurveda() {
   const [medicine, setMedicine] = useState("");
@@ -19,7 +20,7 @@ function Ayurveda() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/ayurveda/search",
+        `${API_URL}/api/ayurveda/search`,
         {
           method: "POST",
           headers: {

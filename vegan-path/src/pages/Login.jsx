@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../api";
 
 function Login() {
   const navigate = useNavigate();
@@ -26,12 +27,10 @@ function Login() {
 
     try {
       const endpoint = isRegister
-        ? "http://localhost:5000/api/auth/register"
-        : "http://localhost:5000/api/auth/login";
+        ? `${API_URL}/api/auth/register`
+        : `${API_URL}/api/auth/login`;
 
-      const body = isRegister
-        ? { name, email, password }
-        : { email, password };
+      const body = isRegister ? { name, email, password } : { email, password };
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -66,7 +65,6 @@ function Login() {
           navigate("/dashboard");
         }, 500);
       }
-
     } catch (err) {
       console.error("Authentication error:", err);
       setError(err.message);
@@ -77,36 +75,23 @@ function Login() {
 
   return (
     <div className="auth-page">
-
       <div className="auth-card">
-
         <div className="auth-header">
-
           <span>🌱 VEGAN PATH</span>
 
-          <h1>
-            {isRegister
-              ? "Create Your Account"
-              : "Welcome Back"}
-          </h1>
+          <h1>{isRegister ? "Create Your Account" : "Welcome Back"}</h1>
 
           <p>
             {isRegister
               ? "Start your healthy vegan journey."
               : "Continue your healthy vegan journey."}
           </p>
-
         </div>
 
-
         <form onSubmit={handleSubmit}>
-
           {isRegister && (
             <div className="form-group">
-
-              <label>
-                Name
-              </label>
+              <label>Name</label>
 
               <input
                 type="text"
@@ -115,16 +100,11 @@ function Login() {
                 placeholder="Enter your name"
                 required
               />
-
             </div>
           )}
 
-
           <div className="form-group">
-
-            <label>
-              Email
-            </label>
+            <label>Email</label>
 
             <input
               type="email"
@@ -133,15 +113,10 @@ function Login() {
               placeholder="Enter your email"
               required
             />
-
           </div>
 
-
           <div className="form-group">
-
-            <label>
-              Password
-            </label>
+            <label>Password</label>
 
             <input
               type="password"
@@ -150,45 +125,24 @@ function Login() {
               placeholder="Enter your password"
               required
             />
-
           </div>
 
+          {error && <p className="auth-error">⚠️ {error}</p>}
 
-          {error && (
-            <p className="auth-error">
-              ⚠️ {error}
-            </p>
-          )}
+          {success && <p className="auth-success">✅ {success}</p>}
 
-
-          {success && (
-            <p className="auth-success">
-              ✅ {success}
-            </p>
-          )}
-
-
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
+          <button type="submit" className="auth-button" disabled={loading}>
             {loading
               ? "Please wait..."
               : isRegister
                 ? "Create Account"
                 : "Login"}
           </button>
-
         </form>
 
-
         <div className="auth-switch">
-
           <p>
-            {isRegister
-              ? "Already have an account?"
-              : "Don't have an account?"}
+            {isRegister ? "Already have an account?" : "Don't have an account?"}
           </p>
 
           <button
@@ -199,15 +153,10 @@ function Login() {
               setSuccess("");
             }}
           >
-            {isRegister
-              ? "Login"
-              : "Create an account"}
+            {isRegister ? "Login" : "Create an account"}
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 }

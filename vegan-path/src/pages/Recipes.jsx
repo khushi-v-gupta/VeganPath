@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
+import API_URL from "../api";
 
 function Recipes() {
   const getYouTubeSearchUrl = (recipe) => {
@@ -36,7 +37,7 @@ function Recipes() {
     const fetchDailyRecipe = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/recipes/daily/today",
+          `${API_URL}/api/recipes/daily/today`,
         );
 
         const data = await response.json();
@@ -63,7 +64,7 @@ function Recipes() {
       try {
         setNutritionLoading(true);
 
-        const response = await fetch("http://localhost:5000/api/nutrition");
+        const response = await fetch(`${API_URL}/api/nutrition`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch nutrition data");
@@ -94,7 +95,7 @@ function Recipes() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/recipes/generate",
+        `${API_URL}/api/recipes/generate`,
         {
           method: "POST",
           headers: {
@@ -150,7 +151,7 @@ function Recipes() {
           }
         }
 
-        const url = `http://localhost:5000/api/recipes${
+        const url = `${API_URL}/api/recipes${
           params.toString() ? `?${params.toString()}` : ""
         }`;
 

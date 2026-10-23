@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./RecipeDetails.css";
+import API_URL from "../api";
 
 function RecipeDetails() {
 const { id } = useParams();
@@ -18,7 +19,7 @@ setError("");
 
 
     const response = await fetch(
-      `http://localhost:5000/api/recipes/${id}`
+      `${API_URL}/api/recipes/${id}`
     );
 
     const data = await response.json();

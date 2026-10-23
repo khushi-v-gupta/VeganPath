@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Nutrition.css";
+import API_URL from "../api";
 
 function Nutrition() {
   const [nutritionData, setNutritionData] = useState([]);
@@ -11,7 +12,7 @@ function Nutrition() {
     const fetchNutrition = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/nutrition"
+          `${API_URL}/api/nutrition`
         );
 
         const data = await response.json();

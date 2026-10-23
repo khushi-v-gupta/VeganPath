@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./FoodScanner.css";
+import API_URL from "../api";
 
 const FoodScanner = () => {
   const videoRef = useRef(null);
@@ -21,7 +22,7 @@ const FoodScanner = () => {
       setResult(null);
 
       const response = await fetch(
-        "http://localhost:5000/api/scanner/analyze",
+        `${API_URL}/api/scanner/analyze`,
         {
           method: "POST",
           headers: {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function MealPlanner() {
   const [form, setForm] = useState({
@@ -34,7 +35,7 @@ function MealPlanner() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/meal-plan/generate",
+        `${API_URL}/api/meal-plan/generate`,
         {
           method: "POST",
           headers: {
