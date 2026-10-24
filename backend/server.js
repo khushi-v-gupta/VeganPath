@@ -11,6 +11,9 @@ const nutritionRoutes = require("./routes/nutritionRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const ayurvedaRoutes = require("./routes/ayurvedaRoutes");
 const mealPlanRoutes = require("./routes/mealPlanRoutes");
+
+const mealRoutes = require("./routes/mealRoutes");
+
 const scannerRoutes = require("./routes/scanner");
 
 
@@ -26,6 +29,7 @@ app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/ayurveda", ayurvedaRoutes);
 app.use("/api/meal-plan", mealPlanRoutes);
+app.use("/api/meals", mealRoutes);
 app.use("/api/scanner", scannerRoutes);
 
 // Test route
