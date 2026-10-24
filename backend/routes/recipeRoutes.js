@@ -171,121 +171,174 @@ router.post("/generate", async (req, res) => {
 // GET TODAY'S AI RECIPE
 // =====================================================
 
+// GET TODAY'S AI RECIPES
 router.get("/daily/today", async (req, res) => {
-
     try {
+        const dateParts = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).formatToParts(new Date());
 
-        const startOfDay = new Date();
+        const dateValues = {};
 
-        startOfDay.setHours(
-            0,
-            0,
-            0,
-            0
-        );
-
-
-        const endOfDay = new Date();
-
-        endOfDay.setHours(
-            23,
-            59,
-            59,
-            999
-        );
-
-
-        let dailyRecipe =
-            await Recipe.findOne({
-
-                isDailyRecipe: true,
-
-                dailyDate: {
-                    $gte: startOfDay,
-                    $lte: endOfDay
-                }
-
-            });
-
-
-        // TODAY'S RECIPE ALREADY EXISTS
-
-        if (dailyRecipe) {
-
-            return res.json({
-
-                message:
-                    "Today's recipe found",
-
-                recipe: dailyRecipe
-
-            });
-
-        }
-
-
-        // GENERATE NEW DAILY RECIPE
-
-        const recipe =
-            await generateRecipe({
-
-                ingredients:
-                    "seasonal vegetables, lentils, tofu, spinach",
-
-                cuisine: "Indian",
-
-                mealType: "Dinner",
-
-                goal: "Balanced Nutrition",
-
-                calories: 500
-
-            });
-
-
-        // SAVE AS DAILY RECIPE
-
-        dailyRecipe =
-            await Recipe.create({
-
-                ...recipe,
-
-                isDailyRecipe: true,
-
-                dailyDate: new Date()
-
-            });
-
-
-        res.status(201).json({
-
-            message:
-                "Today's AI recipe generated",
-
-            recipe: dailyRecipe
-
+        dateParts.forEach(({ type, value }) => {
+            dateValues[type] = value;
         });
 
+        const today =
+            `${dateValues.year}-${dateValues.month}-${dateValues.day}`;
+
+        const recipes = await Recipe.find({
+            isDailyRecipe: true,
+            dailyDate: today
+        }).sort({ dailySlot: 1 });
+
+        res.json({
+            message: recipes.length
+                ? "Today's vegan recipes loaded"
+                : "Today's recipes have not been generated yet",
+            recipes,
+            recipe: recipes[0] || null
+        });
 
     } catch (error) {
-
-        console.error(
-            "DAILY RECIPE ERROR:",
-            error
-        );
-
+        console.error("DAILY RECIPES ERROR:", error);
 
         res.status(500).json({
-
-            message:
-                "Unable to generate today's recipe",
-
+            message: "Unable to load today's recipes",
             error: error.message
+        });
+    }
+});
 
+// POST /daily/generate
+// Secure endpoint called by the scheduled workflow
+router.post("/daily/generate", async (req, res) => {
+    try {
+        const crypto = require("crypto");
+
+        const expectedSecret = process.env.CRON_SECRET;
+        const suppliedSecret = req.get("x-cron-secret") || "";
+
+        if (
+            !expectedSecret ||
+            !suppliedSecret ||
+            Buffer.byteLength(expectedSecret) !== Buffer.byteLength(suppliedSecret) ||
+            !crypto.timingSafeEqual(
+                Buffer.from(expectedSecret),
+                Buffer.from(suppliedSecret)
+            )
+        ) {
+            return res.status(401).json({
+                message: "Unauthorized scheduler request"
+            });
+        }
+
+        const { slot } = req.body;
+
+        if (!["03:00", "15:00"].includes(slot)) {
+            return res.status(400).json({
+                message: 'Invalid slot. Use "03:00" or "15:00".'
+            });
+        }
+
+        // Get today's date in Indian Standard Time
+        const dateParts = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).formatToParts(new Date());
+
+        const dateValues = {};
+        dateParts.forEach(({ type, value }) => {
+            dateValues[type] = value;
         });
 
-    }
+        const dailyDate =
+            `${dateValues.year}-${dateValues.month}-${dateValues.day}`;
 
+        // Avoid generating the same slot twice on the same day
+        const existingRecipe = await Recipe.findOne({
+            isDailyRecipe: true,
+            dailyDate,
+            dailySlot: slot
+        });
+
+        if (existingRecipe) {
+            return res.json({
+                message: "Recipe already generated for this slot",
+                recipe: existingRecipe
+            });
+        }
+
+        // Randomly choose recipe requirements
+        const options = [
+            {
+                cuisine: "Indian",
+                mealType: "Breakfast",
+                ingredients: "oats, banana, almonds, plant-based milk"
+            },
+            {
+                cuisine: "Mediterranean",
+                mealType: "Lunch",
+                ingredients: "chickpeas, cucumber, tomato, olive oil"
+            },
+            {
+                cuisine: "Indian",
+                mealType: "Dinner",
+                ingredients: "lentils, spinach, tomatoes, spices"
+            },
+            {
+                cuisine: "Asian",
+                mealType: "Lunch",
+                ingredients: "tofu, broccoli, carrots, rice"
+            },
+            {
+                cuisine: "Mexican",
+                mealType: "Snack",
+                ingredients: "black beans, corn, tomatoes, avocado"
+            },
+            {
+                cuisine: "Indian",
+                mealType: "Dinner",
+                ingredients: "chickpeas, potatoes, peas, spices"
+            }
+        ];
+
+        const selected =
+            options[Math.floor(Math.random() * options.length)];
+
+        const recipe = await generateRecipe({
+            ingredients: selected.ingredients,
+            cuisine: selected.cuisine,
+            mealType: selected.mealType,
+            goal: "Balanced Nutrition",
+            calories: 400 + Math.floor(Math.random() * 201)
+        });
+
+        const savedRecipe = await Recipe.create({
+            ...recipe,
+            isDailyRecipe: true,
+            dailyDate,
+            dailySlot: slot
+        });
+
+        return res.status(201).json({
+            message: "Daily vegan recipe generated and saved",
+            recipe: savedRecipe
+        });
+
+    } catch (error) {
+        console.error("SCHEDULED RECIPE ERROR:", error);
+
+        return res.status(500).json({
+            message: "Unable to generate daily recipe",
+            error: error.message
+        });
+    }
 });
 
 

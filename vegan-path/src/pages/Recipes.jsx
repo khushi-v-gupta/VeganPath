@@ -29,6 +29,265 @@ function Recipes() {
   const [nutritionLoading, setNutritionLoading] = useState(true);
 
   const [recipes, setRecipes] = useState([]);
+
+  const defaultRecipes = [
+    {
+      _id: "default-1",
+      title: "Indian Chickpea Curry",
+      cuisine: "Indian",
+      mealType: "Lunch",
+      prepTime: 30,
+      difficulty: "Easy",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR75BFqWAUFBh6zh6BYfEuQ8u3QWN6hqhK_uHOuvWJKw&s=10",
+      description:
+        "A comforting Indian chickpea curry made with tomatoes and aromatic spices.",
+      nutrition: { calories: 280, protein: 12 },
+      ingredients: [
+        { name: "Boiled chickpeas", quantity: "1.5 cups" },
+        { name: "Onion", quantity: "1 medium, chopped" },
+        { name: "Tomatoes", quantity: "2 medium, chopped" },
+        { name: "Garlic", quantity: "3 cloves, minced" },
+        { name: "Ginger", quantity: "1 tsp, grated" },
+        { name: "Cooking oil", quantity: "1 tbsp" },
+        { name: "Cumin", quantity: "1 tsp" },
+        { name: "Coriander powder", quantity: "1 tsp" },
+        { name: "Turmeric", quantity: "1/4 tsp" },
+        { name: "Garam masala", quantity: "1/2 tsp" },
+        { name: "Salt", quantity: "To taste" },
+      ],
+      instructions: [
+        "Heat oil in a pan over medium heat.",
+        "Add cumin seeds and let them sizzle briefly.",
+        "Add chopped onion and cook until golden.",
+        "Add garlic and ginger, then sauté for 30 seconds.",
+        "Add tomatoes, turmeric, coriander powder, and salt. Cook until the tomatoes soften.",
+        "Add boiled chickpeas and half a cup of water.",
+        "Simmer for 10–15 minutes, stirring occasionally.",
+        "Add garam masala, mix well, and serve hot.",
+      ],
+    },
+    {
+      _id: "default-2",
+      title: "Asian Tofu Stir-Fry",
+      cuisine: "Asian",
+      mealType: "Dinner",
+      prepTime: 25,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIoyRMWFhyR29CwrvkeDniP2Xo8Ncnavnwh-UEJf2dwg&s=10",
+      description:
+        "Tofu stir-fried with colourful vegetables and a savoury soy sauce.",
+      nutrition: { calories: 320, protein: 18 },
+      ingredients: [
+        { name: "Firm tofu", quantity: "200 g, cubed" },
+        { name: "Broccoli", quantity: "1 cup" },
+        { name: "Bell pepper", quantity: "1 medium, sliced" },
+        { name: "Carrot", quantity: "1 medium, sliced" },
+        { name: "Soy sauce", quantity: "2 tbsp" },
+        { name: "Garlic", quantity: "2 cloves, minced" },
+        { name: "Ginger", quantity: "1 tsp, grated" },
+        { name: "Cooking oil", quantity: "1 tbsp" },
+      ],
+      instructions: [
+        "Press the tofu to remove excess water and cut it into cubes.",
+        "Wash and slice the vegetables.",
+        "Heat half the oil in a pan and cook the tofu until golden. Set aside.",
+        "Add the remaining oil, garlic, and ginger to the pan.",
+        "Add the vegetables and stir-fry for 4–5 minutes.",
+        "Return the tofu to the pan and add soy sauce.",
+        "Toss everything together and cook for another 2–3 minutes.",
+        "Serve hot with rice or noodles.",
+      ],
+    },
+    {
+      _id: "default-3",
+      title: "Italian Tomato Pasta",
+      cuisine: "Italian",
+      mealType: "Lunch",
+      prepTime: 25,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScnDhE1fWEaTvcfiTF5yvlt8ehcCSpRtFa_fDDmcsVEQ&s=10",
+      description: "Pasta tossed in a homemade tomato, garlic, and herb sauce.",
+      nutrition: { calories: 350, protein: 10 },
+      ingredients: [
+        { name: "Pasta", quantity: "200 g" },
+        { name: "Tomatoes", quantity: "3 medium, chopped" },
+        { name: "Garlic", quantity: "3 cloves, minced" },
+        { name: "Onion", quantity: "1 small, chopped" },
+        { name: "Olive oil", quantity: "1 tbsp" },
+        { name: "Dried oregano", quantity: "1 tsp" },
+        { name: "Black pepper", quantity: "To taste" },
+        { name: "Salt", quantity: "To taste" },
+        { name: "Fresh basil", quantity: "A few leaves" },
+      ],
+      instructions: [
+        "Bring a pot of salted water to a boil.",
+        "Add pasta and cook according to the package instructions.",
+        "Heat olive oil in a pan and sauté the onion until soft.",
+        "Add garlic and cook for 30 seconds.",
+        "Add chopped tomatoes, oregano, salt, and pepper.",
+        "Cook the sauce for 8–10 minutes until the tomatoes soften.",
+        "Drain the pasta and add it to the sauce.",
+        "Mix well, garnish with fresh basil, and serve.",
+      ],
+    },
+    {
+      _id: "default-4",
+      title: "Mexican Bean Tacos",
+      cuisine: "Mexican",
+      mealType: "Dinner",
+      prepTime: 20,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkb5zwcPZoxnX3uBvovcqYfal0W8Js48-M0pVYaj9bcg&s=10",
+      description:
+        "Quick bean tacos with fresh vegetables and a zesty lime dressing.",
+      nutrition: { calories: 310, protein: 11 },
+      ingredients: [
+        { name: "Corn tortillas", quantity: "4 small" },
+        { name: "Cooked black beans", quantity: "1 cup" },
+        { name: "Tomato", quantity: "1 medium, diced" },
+        { name: "Lettuce", quantity: "1 cup, shredded" },
+        { name: "Red onion", quantity: "1/2 small, diced" },
+        { name: "Avocado", quantity: "1/2, sliced" },
+        { name: "Lime juice", quantity: "1 tbsp" },
+        { name: "Cumin powder", quantity: "1/2 tsp" },
+        { name: "Salt", quantity: "To taste" },
+      ],
+      instructions: [
+        "Warm the cooked black beans in a pan.",
+        "Add cumin powder and salt, then mix well.",
+        "Warm the tortillas in a dry pan.",
+        "Place the warm beans on each tortilla.",
+        "Add lettuce, tomato, red onion, and avocado.",
+        "Drizzle lime juice over the filling.",
+        "Serve immediately while the tortillas are warm.",
+      ],
+    },
+    {
+      _id: "default-5",
+      title: "Thai Coconut Vegetable Curry",
+      cuisine: "Thai",
+      mealType: "Dinner",
+      prepTime: 30,
+      difficulty: "Medium",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFl3_LTXS5e7FKywYxd3dTYl13WY6DsgmfrT-0YHAjlw&s=10",
+      description:
+        "A creamy coconut curry with vegetables and fragrant Thai-inspired flavours.",
+      nutrition: { calories: 390, protein: 8 },
+      ingredients: [
+        { name: "Coconut milk", quantity: "1 cup" },
+        { name: "Broccoli", quantity: "1 cup" },
+        { name: "Bell pepper", quantity: "1 medium, sliced" },
+        { name: "Carrot", quantity: "1 medium, sliced" },
+        { name: "Mushrooms", quantity: "1 cup, sliced" },
+        { name: "Thai curry paste", quantity: "1 tbsp, vegan-certified" },
+        { name: "Soy sauce", quantity: "1 tbsp" },
+        { name: "Cooking oil", quantity: "1 tsp" },
+        { name: "Lime juice", quantity: "1 tsp" },
+      ],
+      instructions: [
+        "Wash and chop all the vegetables.",
+        "Heat oil in a deep pan over medium heat.",
+        "Add vegan Thai curry paste and stir for about one minute.",
+        "Pour in the coconut milk and stir until combined.",
+        "Add the carrot, broccoli, bell pepper, and mushrooms.",
+        "Simmer for 12–15 minutes until the vegetables are tender.",
+        "Stir in soy sauce and lime juice.",
+        "Taste, adjust the seasoning, and serve with rice.",
+      ],
+    },
+    {
+      _id: "default-6",
+      title: "Japanese Vegetable Sushi Bowl",
+      cuisine: "Japanese",
+      mealType: "Lunch",
+      prepTime: 25,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNPFBH6UIZR95UIfSd28VssssD1IsGQ3aXCjxoANj7JQ&s=10",
+      description:
+        "A sushi-inspired rice bowl topped with fresh vegetables and tofu.",
+      nutrition: { calories: 330, protein: 12 },
+      ingredients: [
+        { name: "Sushi rice", quantity: "1 cup uncooked" },
+        { name: "Cucumber", quantity: "1/2, sliced" },
+        { name: "Carrot", quantity: "1 small, julienned" },
+        { name: "Avocado", quantity: "1/2, sliced" },
+        { name: "Firm tofu", quantity: "100 g, cubed" },
+        { name: "Rice vinegar", quantity: "1 tbsp" },
+        { name: "Soy sauce", quantity: "1 tbsp" },
+        { name: "Sesame seeds", quantity: "1 tsp" },
+        { name: "Nori sheet", quantity: "1, cut into strips" },
+      ],
+      instructions: [
+        "Rinse the sushi rice until the water runs mostly clear.",
+        "Cook the rice according to the package instructions.",
+        "Mix the cooked rice with rice vinegar and let it cool slightly.",
+        "Pan-fry the tofu cubes until lightly golden.",
+        "Slice the cucumber, carrot, and avocado.",
+        "Divide the rice between serving bowls.",
+        "Arrange the vegetables and tofu over the rice.",
+        "Drizzle with soy sauce and garnish with sesame seeds and nori strips.",
+      ],
+    },
+    {
+      _id: "default-7",
+      title: "Healthy Banana Oatmeal",
+      cuisine: "Global",
+      mealType: "Breakfast",
+      prepTime: 10,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFwfZ4vZ8N-eEB57lEtESpy1olTzd2SarCgB_JRE74QA&s=10",
+      description:
+        "Warm oatmeal with banana and cinnamon for a simple breakfast.",
+      nutrition: { calories: 280, protein: 8 },
+      ingredients: [
+        { name: "Rolled oats", quantity: "1/2 cup" },
+        { name: "Plant-based milk", quantity: "1 cup" },
+        { name: "Banana", quantity: "1 medium, sliced" },
+        { name: "Chia seeds", quantity: "1 tsp" },
+        { name: "Cinnamon", quantity: "1/4 tsp" },
+        { name: "Maple syrup", quantity: "1 tsp, optional" },
+      ],
+      instructions: [
+        "Add oats and plant-based milk to a small saucepan.",
+        "Bring to a gentle simmer over medium heat.",
+        "Cook for 4–5 minutes, stirring regularly.",
+        "Mash half the banana and stir it into the oatmeal.",
+        "Add cinnamon and chia seeds.",
+        "Pour into a bowl and top with the remaining banana.",
+        "Add maple syrup if desired and serve warm.",
+      ],
+    },
+    {
+      _id: "default-8",
+      title: "Crispy Roasted Chickpeas",
+      cuisine: "Indian",
+      mealType: "Snack",
+      prepTime: 25,
+      difficulty: "Easy",
+      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrp2QaRmR0Gd7Jw253_LS1dvo3_2mdOrc1p5-da5CH9g&s=10",
+      description:
+        "Crunchy oven-roasted chickpeas seasoned with aromatic spices.",
+      nutrition: { calories: 180, protein: 9 },
+      ingredients: [
+        { name: "Cooked chickpeas", quantity: "1 cup, drained" },
+        { name: "Olive oil", quantity: "1 tsp" },
+        { name: "Paprika", quantity: "1/2 tsp" },
+        { name: "Cumin powder", quantity: "1/2 tsp" },
+        { name: "Garlic powder", quantity: "1/4 tsp" },
+        { name: "Salt", quantity: "To taste" },
+      ],
+      instructions: [
+        "Preheat the oven to 200°C.",
+        "Drain the chickpeas and pat them dry thoroughly.",
+        "Toss the chickpeas with olive oil, paprika, cumin, garlic powder, and salt.",
+        "Spread them in a single layer on a baking tray.",
+        "Roast for 20–25 minutes, shaking the tray halfway through.",
+        "Check that the chickpeas are crisp, then let them cool slightly.",
+        "Serve as a crunchy snack.",
+      ],
+    },
+  ];
+
   const [recipesLoading, setRecipesLoading] = useState(true);
   const [recipeSearch, setRecipeSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -36,9 +295,7 @@ function Recipes() {
   useEffect(() => {
     const fetchDailyRecipe = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/api/recipes/daily/today`,
-        );
+        const response = await fetch(`${API_URL}/api/recipes/daily/today`);
 
         const data = await response.json();
 
@@ -94,22 +351,19 @@ function Recipes() {
     setAiRecipe(null);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/recipes/generate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ingredients,
-            cuisine,
-            mealType,
-            goal,
-            calories,
-          }),
+      const response = await fetch(`${API_URL}/api/recipes/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          ingredients,
+          cuisine,
+          mealType,
+          goal,
+          calories,
+        }),
+      });
 
       const data = await response.json();
 
@@ -132,50 +386,242 @@ function Recipes() {
 
   useEffect(() => {
     const fetchRecipes = async () => {
+      setRecipesLoading(true);
+
       try {
-        setRecipesLoading(true);
+        const searchText = recipeSearch.trim().toLowerCase();
 
-        const params = new URLSearchParams();
-
-        if (recipeSearch.trim()) {
-          params.append("search", recipeSearch.trim());
-        }
-
-        if (selectedCategory) {
-          if (
-            ["Breakfast", "Lunch", "Dinner", "Snack"].includes(selectedCategory)
-          ) {
-            params.append("mealType", selectedCategory);
-          } else if (selectedCategory !== "All") {
-            params.append("cuisine", selectedCategory);
-          }
-        }
-
-        const url = `${API_URL}/api/recipes${
-          params.toString() ? `?${params.toString()}` : ""
-        }`;
-
-        const response = await fetch(url);
-
+        // 1. Fetch recipes from your existing backend
+        const response = await fetch(`${API_URL}/api/recipes`);
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Failed to load recipes");
+          throw new Error("Failed to fetch local recipes");
         }
 
-        setRecipes(data.recipes || []);
+        const backendRecipes = data.recipes || [];
+
+        // 2. Combine default cards with backend recipes
+        const combinedRecipes = [
+          ...defaultRecipes,
+          ...backendRecipes.filter(
+            (recipe) =>
+              !defaultRecipes.some(
+                (defaultRecipe) =>
+                  defaultRecipe.title.toLowerCase() ===
+                  recipe.title?.toLowerCase(),
+              ),
+          ),
+        ];
+
+        // 3. Filter local recipes by search and category
+        const localResults = combinedRecipes.filter((recipe) => {
+          const matchesSearch =
+            !searchText ||
+            recipe.title?.toLowerCase().includes(searchText) ||
+            recipe.cuisine?.toLowerCase().includes(searchText) ||
+            recipe.mealType?.toLowerCase().includes(searchText) ||
+            recipe.description?.toLowerCase().includes(searchText) ||
+            recipe.ingredients?.some((ingredient) =>
+              ingredient.name?.toLowerCase().includes(searchText),
+            );
+
+          const matchesCategory =
+            !selectedCategory ||
+            selectedCategory === "All" ||
+            (["Breakfast", "Lunch", "Dinner", "Snack"].includes(
+              selectedCategory,
+            )
+              ? recipe.mealType === selectedCategory
+              : recipe.cuisine?.toLowerCase() ===
+                selectedCategory.toLowerCase());
+
+          return matchesSearch && matchesCategory;
+        });
+
+        // 4. If the search box is empty, show local recipes
+        if (!searchText) {
+          setRecipes(localResults);
+          return;
+        }
+
+       
+       
+        // 5. Search online recipes by name and ingredients
+        const searchTerm = recipeSearch.trim();
+
+        const searchTerms = [
+          searchTerm,
+          ...searchTerm
+            .split(/\s+/)
+            .filter((word) => word.length >= 3),
+        ];
+
+        const uniqueTerms = [
+          ...new Set(searchTerms.map((term) => term.toLowerCase())),
+        ];
+
+        const onlineRecipeMap = new Map();
+
+        await Promise.all(
+          uniqueTerms.map(async (term) => {
+            try {
+              // Search by recipe name
+              const nameResponse = await fetch(
+                `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(term)}`,
+              );
+
+              if (nameResponse.ok) {
+                const nameData = await nameResponse.json();
+
+                (nameData.meals || []).forEach((meal) => {
+                  onlineRecipeMap.set(meal.idMeal, meal);
+                });
+              }
+
+              // Search by ingredient
+              const ingredientResponse = await fetch(
+                `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(term.replace(/\s+/g, "_"))}`,
+              );
+
+              if (ingredientResponse.ok) {
+                const ingredientData = await ingredientResponse.json();
+
+                (ingredientData.meals || []).forEach((meal) => {
+                  onlineRecipeMap.set(meal.idMeal, meal);
+                });
+              }
+            } catch (error) {
+              console.error(`Search failed for ${term}:`, error);
+            }
+          }),
+        );
+
+        // 6. Get full details for every unique recipe
+        const onlineResults = await Promise.all(
+          [...onlineRecipeMap.values()].map(async (meal) => {
+            try {
+              const response = await fetch(
+                `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`,
+              );
+
+              if (!response.ok) return null;
+
+              const data = await response.json();
+              const fullMeal = data.meals?.[0];
+
+              if (!fullMeal) return null;
+
+              const ingredients = [];
+
+              for (let i = 1; i <= 20; i++) {
+                const name = fullMeal[`strIngredient${i}`]?.trim();
+                const quantity = fullMeal[`strMeasure${i}`]?.trim();
+
+                if (name) {
+                  ingredients.push({
+                    name,
+                    quantity: quantity || "",
+                  });
+                }
+              }
+
+              return {
+                externalId: fullMeal.idMeal,
+                title: fullMeal.strMeal,
+                cuisine: fullMeal.strArea || "Global",
+                mealType: fullMeal.strCategory || "Vegan",
+                description: fullMeal.strInstructions || "",
+                image: fullMeal.strMealThumb,
+                prepTime: 0,
+                ingredients,
+                instructions: fullMeal.strInstructions
+                  ? fullMeal.strInstructions
+                      .split(/\r?\n/)
+                      .map((step) => step.trim())
+                      .filter(Boolean)
+                  : [],
+                sourceUrl: fullMeal.strSource || "",
+                youtubeUrl: fullMeal.strYoutube || "",
+                nutrition: { calories: 0 },
+              };
+            } catch (error) {
+              console.error("Could not load recipe details:", error);
+              return null;
+            }
+          }),
+        );
+
+        const onlineRecipes = onlineResults.filter(Boolean);
+
+        // 7. Remove recipes with obvious non-vegan ingredients
+        const nonVeganPattern =
+          /\b(chicken|beef|pork|lamb|bacon|ham|fish|salmon|tuna|shrimp|prawn|seafood|anchovy|egg|eggs|cheese|butter|ghee|honey|gelatin|whey|yogurt|yoghurt|mayonnaise|cream)\b/i;
+
+        const veganCandidates = onlineRecipes.filter((recipe) =>
+          recipe.ingredients.every((ingredient) => {
+            const name = ingredient.name
+              .toLowerCase()
+              .replace(
+                /\b(coconut|almond|soy|oat|rice|cashew|plant-based)\s+milk\b/gi,
+                "",
+              );
+
+            return !nonVeganPattern.test(name);
+          }),
+        );
+
+        // 8. Combine local and online recipes without duplicate titles
+        const seenTitles = new Set(
+          localResults.map((recipe) => recipe.title?.toLowerCase()),
+        );
+
+        const uniqueOnlineRecipes = veganCandidates.filter((recipe) => {
+          const title = recipe.title?.toLowerCase();
+
+          if (!title || seenTitles.has(title)) return false;
+
+          seenTitles.add(title);
+          return true;
+        });
+
+        const results = [...localResults, ...uniqueOnlineRecipes];
+
+        setRecipes(results);
+
+
       } catch (error) {
-        console.error("RECIPE LIBRARY ERROR:", error);
-        setRecipes([]);
+        console.error("RECIPE SEARCH ERROR:", error);
+
+        // Keep local recipes available if online search fails
+        const searchText = recipeSearch.trim().toLowerCase();
+
+        const fallbackRecipes = defaultRecipes.filter((recipe) => {
+          const matchesSearch =
+            !searchText ||
+            recipe.title.toLowerCase().includes(searchText) ||
+            recipe.cuisine.toLowerCase().includes(searchText) ||
+            recipe.mealType.toLowerCase().includes(searchText);
+
+          const matchesCategory =
+            !selectedCategory ||
+            (["Breakfast", "Lunch", "Dinner", "Snack"].includes(
+              selectedCategory,
+            )
+              ? recipe.mealType === selectedCategory
+              : recipe.cuisine.toLowerCase() ===
+                selectedCategory.toLowerCase());
+
+          return matchesSearch && matchesCategory;
+        });
+
+        setRecipes(fallbackRecipes);
       } finally {
         setRecipesLoading(false);
       }
     };
 
-    // Wait until the user stops typing
-    const timer = setTimeout(() => {
-      fetchRecipes();
-    }, 400);
+    const timer = setTimeout(fetchRecipes, 400);
 
     return () => clearTimeout(timer);
   }, [recipeSearch, selectedCategory]);
@@ -643,9 +1089,24 @@ function Recipes() {
           {!recipesLoading &&
             recipes.map((recipe) => (
               <RecipeCard
-                key={recipe._id}
+                key={recipe._id || recipe.externalId || recipe.title}
                 recipe={recipe}
-                onView={(recipeId) => navigate(`/recipe/${recipeId}`)}
+                onView={() => {
+                  if (recipe.externalId) {
+                    // Online recipe: open details with complete data
+                    navigate(`/recipe/${recipe.externalId}`, {
+                      state: { recipe },
+                    });
+                  } else if (recipe._id && /^[a-f\d]{24}$/i.test(recipe._id)) {
+                    // Database recipe
+                    navigate(`/recipe/${recipe._id}`);
+                  } else {
+                    // Default recipe: show its details directly
+                    navigate(`/recipe/${encodeURIComponent(recipe.title)}`, {
+                      state: { recipe },
+                    });
+                  }
+                }}
               />
             ))}
         </div>

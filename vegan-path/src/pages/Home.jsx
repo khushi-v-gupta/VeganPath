@@ -215,7 +215,7 @@ function Home() {
         <div className="recipe-grid">
 
           <RecipeCard
-            image="https://images.unsplash.com/photo-1547592180-85f173990554"
+            image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2v98csDZaNaW3jUG2MLSb6tMP9scDqZb2HU_wGFVZuA&s=10"
             title="Rainbow Buddha Bowl"
             category="Lunch"
             time="20 min"
@@ -223,7 +223,7 @@ function Home() {
           />
 
           <RecipeCard
-            image="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
+            image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1qVzQcA-9paAmjaWtjJzUrCWnMj12nS2_SmeGlCqArg&s=10"
             title="Fresh Green Salad"
             category="Healthy"
             time="15 min"
@@ -231,7 +231,7 @@ function Home() {
           />
 
           <RecipeCard
-            image="https://images.unsplash.com/photo-1601050690597-df0568f70950"
+            image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuH-DTgUmHCe3oJBo6NQBq2xUIUafIdHPpeEi5Rvz01w&s=10"
             title="Vegetable Dumplings"
             category="Dinner"
             time="35 min"

@@ -107,6 +107,12 @@ const recipeSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    
+    dailySlot: {
+  type: String,
+  enum: ["03:00", "15:00"],
+  default: null,
+},
   },
   {
     timestamps: true,

@@ -1,0 +1,60 @@
+name: Generate Daily Vegan Recipes
+
+on:
+  schedule:
+    # 3:00 AM IST = 21:30 UTC on the previous day
+    - cron: "30 21 * * *"
+
+    # 3:00 PM IST = 09:30 UTC
+    - cron: "30 9 * * *"
+
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Recipe time slot"
+        required: true
+        type: choice
+        options:
+          - "03:00"
+          - "15:00"
+
+jobs:
+  generate-recipe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Select recipe time slot
+        id: slot
+        shell: bash
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_SLOT: ${{ inputs.slot }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "slot=$MANUAL_SLOT" >> "$GITHUB_OUTPUT"
+          elif [ "$SCHEDULE" = "30 21 * * *" ]; then
+            echo "slot=03:00" >> "$GITHUB_OUTPUT"
+          else
+            echo "slot=15:00" >> "$GITHUB_OUTPUT"
+          fi
+
+
+
+      - name: Generate and save vegan recipe
+        env:
+          BACKEND_URL: https://veganpath-backend.onrender.com
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          RECIPE_SLOT: ${{ steps.slot.outputs.slot }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET is not configured in GitHub repository secrets."
+            exit 1
+          fi
+
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --url "$BACKEND_URL/api/recipes/daily/generate" \
+            --header "Content-Type: application/json" \
+            --header "x-cron-secret: $CRON_SECRET" \
+            --data "{\"slot\":\"$RECIPE_SLOT\"}"
+

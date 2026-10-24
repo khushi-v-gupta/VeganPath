@@ -27,7 +27,7 @@ function RecipeCard({
     } vegan recipe`;
 
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(
-      query
+      query,
     )}`;
   };
 
@@ -35,12 +35,25 @@ function RecipeCard({
   let recipeImage = recipeData.image;
 
   // Match common recipes with appropriate food images.
+  // Match common recipes with appropriate food images.
   if (!recipeImage) {
     if (
+      titleLower.includes("samosa") ||
+      titleLower.includes("chana chaat")
+    ) {
+      // High-Protein Samosa Chana Chaat
+      recipeImage =
+        "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80";
+    } else if (
+      titleLower.includes("tofu tikka masala") ||
+      titleLower.includes("tikka masala")
+    ) {
+      // High-Protein Indian Tofu Tikka Masala
+      recipeImage =
+        "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80";
+    } else if (
       titleLower.includes("dal") ||
-      titleLower.includes("lentil") ||
-      titleLower.includes("dal makhni") ||
-      titleLower.includes("dal makhani")
+      titleLower.includes("lentil")
     ) {
       recipeImage =
         "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80";
@@ -78,15 +91,16 @@ function RecipeCard({
       recipeImage =
         "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80";
     } else {
-      // Reliable general vegan-food image
       recipeImage =
         "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80";
     }
   }
 
+
+
   const handleView = () => {
-    if (onView && recipeData._id) {
-      onView(recipeData._id);
+    if (onView) {
+      onView(recipeData._id || recipeData.externalId);
     }
   };
 
@@ -112,16 +126,11 @@ function RecipeCard({
         <div className="recipe-info">
           <span>⏱ {recipeData.prepTime || 0} min</span>
 
-          <span>
-            🔥 {recipeData.nutrition?.calories ?? 0} kcal
-          </span>
+          <span>🔥 {recipeData.nutrition?.calories ?? 0} kcal</span>
         </div>
 
-        {onView && recipeData._id && (
-          <button
-            className="outline-button"
-            onClick={handleView}
-          >
+        {onView && (recipeData._id || recipeData.externalId) && (
+          <button className="outline-button" onClick={handleView}>
             View Recipe
           </button>
         )}
@@ -147,4 +156,3 @@ function RecipeCard({
 }
 
 export default RecipeCard;
-
