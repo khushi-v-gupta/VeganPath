@@ -292,29 +292,46 @@ function Recipes() {
   const [recipeSearch, setRecipeSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  useEffect(() => {
-    const fetchDailyRecipe = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/recipes/daily/today`);
 
-        const data = await response.json();
+useEffect(() => {
+  const fetchDailyRecipe = async () => {
+    try {
+      setDailyLoading(true);
 
-        if (!response.ok) {
-          throw new Error(
-            data.error || data.message || "Failed to load daily recipe",
-          );
-        }
+      const response = await fetch(
+        `${API_URL}/api/recipes/daily/today`
+      );
 
-        setDailyRecipe(data.recipe);
-      } catch (error) {
-        console.error("Daily recipe error:", error);
-      } finally {
-        setDailyLoading(false);
+      const data = await response.json();
+
+      console.log("Daily recipe API URL:", `${API_URL}/api/recipes/daily/today`);
+      console.log("Daily recipe API response:", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || data.message || "Failed to load daily recipe"
+        );
       }
-    };
 
-    fetchDailyRecipe();
-  }, []);
+      const recipe = data.recipe || data.recipes?.[0] || null;
+
+      if (!recipe) {
+        throw new Error("API returned no daily recipe.");
+      }
+
+      setDailyRecipe(recipe);
+    } catch (error) {
+      console.error("Daily recipe error:", error);
+      setDailyRecipe(null);
+    } finally {
+      setDailyLoading(false);
+    }
+  };
+
+  fetchDailyRecipe();
+}, []);
+
+
 
   useEffect(() => {
     const fetchNutrition = async () => {
