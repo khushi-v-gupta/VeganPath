@@ -79,24 +79,36 @@ const nutritionData = [
   },
 ];
 
+
 async function seedNutrition() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
 
     console.log("MongoDB connected");
 
-    await Nutrition.deleteMany({
-      cuisine: { $in: nutritionData.map((item) => item.cuisine) },
-    });
+    for (const item of nutritionData) {
+      await Nutrition.updateOne(
+        { cuisine: item.cuisine },
+        { $setOnInsert: item },
+        { upsert: true }
+      );
+    }
 
-    await Nutrition.insertMany(nutritionData);
+    console.log("Nutrition data seeded successfully");
 
-    console.log("Nutrition data inserted successfully");
+    const count = await Nutrition.countDocuments();
+    console.log("Total nutrition records:", count);
 
     await mongoose.disconnect();
   } catch (error) {
     console.error("SEED ERROR:", error);
+    await mongoose.disconnect();
+    process.exitCode = 1;
   }
 }
+
+seedNutrition();
+
+
 
 seedNutrition();
