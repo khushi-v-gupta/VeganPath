@@ -1,11 +1,10 @@
 const express = require("express");
+const { GoogleGenAI } = require("@google/genai");
 
 const router = express.Router();
 
 router.post("/generate", async (req, res) => {
-
   try {
-
     const {
       goal,
       age,
@@ -18,12 +17,18 @@ router.post("/generate", async (req, res) => {
       allergies,
       dislikes,
       budget,
-      cookingTime
+      cookingTime,
     } = req.body;
 
     if (!age || !height || !weight) {
       return res.status(400).json({
-        message: "Age, height and weight are required"
+        message: "Age, height and weight are required",
+      });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({
+        message: "Gemini API key is not configured",
       });
     }
 
@@ -33,7 +38,6 @@ You are a professional vegan nutrition meal planner.
 Create a personalized ONE-DAY vegan meal plan.
 
 USER INFORMATION:
-
 Goal: ${goal}
 Age: ${age}
 Gender: ${gender}
@@ -47,9 +51,8 @@ Foods disliked: ${dislikes || "None"}
 Budget: ${budget}
 Maximum cooking time: ${cookingTime} minutes
 
-IMPORTANT RULES:
-
-1. Every meal MUST be vegan.
+RULES:
+1. Every meal must be vegan.
 2. Never include meat, fish, eggs, milk, curd, paneer or ghee.
 3. Never include foods listed as allergies.
 4. Avoid disliked foods.
@@ -57,11 +60,10 @@ IMPORTANT RULES:
 6. Keep meals practical and affordable.
 7. Respect the cooking time.
 8. Provide realistic nutritional estimates.
-9. Return ONLY valid JSON.
-10. Do not use markdown.
+9. Return only valid JSON without markdown.
+10. Include exactly ${mealsPerDay || 4} meals in the meals array.
 
-Return exactly this structure:
-
+Return this JSON structure:
 {
   "calories": 2200,
   "protein": 90,
@@ -74,69 +76,46 @@ Return exactly this structure:
       "description": "Short description",
       "calories": 500,
       "protein": 20
-    },
-    {
-      "type": "Lunch",
-      "name": "Meal name",
-      "description": "Short description",
-      "calories": 650,
-      "protein": 25
-    },
-    {
-      "type": "Snack",
-      "name": "Meal name",
-      "description": "Short description",
-      "calories": 300,
-      "protein": 10
-    },
-    {
-      "type": "Dinner",
-      "name": "Meal name",
-      "description": "Short description",
-      "calories": 650,
-      "protein": 30
     }
   ]
 }
+
+Ensure calories, protein, carbs and fat represent estimated daily totals.
 `;
 
-    const response = await fetch(
-      "http://localhost:11434/api/generate",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          model: "llama3.2",
-          prompt: prompt,
-          stream: false,
-          format: "json"
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    const mealPlan = JSON.parse(data.response);
-
-    res.json(mealPlan);
-
-  } catch (error) {
-
-    console.error(
-      "MEAL PLAN ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      message: "Failed to generate meal plan"
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
     });
 
-  }
+    const response = await ai.models.generateContent({
+      model: "gemini-3.8-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
+    const text = response.text;
+
+    if (!text) {
+      throw new Error("Gemini returned an empty response");
+    }
+
+    const mealPlan = JSON.parse(text);
+
+    if (!Array.isArray(mealPlan.meals)) {
+      throw new Error("Invalid meal plan structure returned by Gemini");
+    }
+
+    res.json(mealPlan);
+  } catch (error) {
+    console.error("MEAL PLAN ERROR:", error);
+
+    res.status(500).json({
+      message: "Failed to generate meal plan",
+    });
+  }
 });
 
 module.exports = router;
+
