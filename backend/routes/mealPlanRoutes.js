@@ -88,7 +88,7 @@ Ensure calories, protein, carbs and fat represent estimated daily totals.
     });
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+      model: "gemini-3.5-flash-lite",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
