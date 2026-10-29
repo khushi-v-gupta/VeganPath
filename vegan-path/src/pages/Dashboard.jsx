@@ -114,25 +114,24 @@ function Dashboard() {
   // CALCULATE PROGRESS
   // =========================
 
-  const completedGoals = activity?.completedGoals ?? 0;
-  const totalGoals = activity?.totalGoals ?? 4;
-
-  const progress =
-    totalGoals > 0
-      ? Math.round((completedGoals / totalGoals) * 100)
-      : 0;
-
   const water = activity?.water ?? 0;
-  const waterGoal = activity?.waterGoal ?? 12;
+const waterGoal = activity?.waterGoal ?? 12;
+const veganMeals = activity?.veganMeals ?? 0;
+const streak = activity?.streak ?? 0;
 
-  console.log("WATER DEBUG:", {
-  water: water,
-  waterGoal: waterGoal,
-  activity: activity
-});
+// Calculate completed tasks directly from their actual values.
+const completedGoals = [
+  veganMeals > 0,
+  water >= waterGoal,
+  activity?.exercise === true,
+  activity?.learning === true,
+].filter(Boolean).length;
 
-  const veganMeals = activity?.veganMeals ?? 0;
-  const streak = activity?.streak ?? 0;
+const totalGoals = 4;
+
+const progress = Math.round(
+  (completedGoals / totalGoals) * 100
+);
 
   return (
     <div className="dashboard page-container">

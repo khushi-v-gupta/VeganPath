@@ -52,15 +52,16 @@ const activitySchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    streakAwarded: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-activitySchema.index(
-  { userId: 1, date: 1 },
-  { unique: true }
-);
+activitySchema.index({ userId: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model("Activity", activitySchema);

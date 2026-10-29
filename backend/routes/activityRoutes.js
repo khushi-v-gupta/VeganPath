@@ -78,6 +78,10 @@ router.get("/today", protect, async (req, res) => {
 // UPDATE TODAY'S ACTIVITY
 // =========================
 
+// =========================
+// UPDATE TODAY'S ACTIVITY
+// =========================
+
 router.put("/today", protect, async (req, res) => {
   try {
     const today = getToday();
@@ -88,9 +92,6 @@ router.put("/today", protect, async (req, res) => {
       "waterGoal",
       "exercise",
       "learning",
-      "completedGoals",
-      "totalGoals",
-      "streak",
     ];
 
     const updates = {};
@@ -101,24 +102,71 @@ router.put("/today", protect, async (req, res) => {
       }
     });
 
-    const activity = await Activity.findOneAndUpdate(
-      {
+    // Get today's existing activity.
+    let activity = await Activity.findOne({
+      userId: req.userId,
+      date: today,
+    });
+
+    // Create today's record if it doesn't exist.
+    if (!activity) {
+      activity = new Activity({
         userId: req.userId,
         date: today,
-      },
-      {
-        $set: updates,
-        $setOnInsert: {
-          userId: req.userId,
-          date: today,
-        },
-      },
-      {
-        new: true,
-        upsert: true,
-        runValidators: true,
+      });
+    }
+
+    // Apply the requested changes.
+    Object.assign(activity, updates);
+
+    // Calculate the four goals from actual activity values.
+    const goals = [
+      Number(activity.veganMeals || 0) > 0,
+      Number(activity.water || 0) >= Number(activity.waterGoal || 12),
+      activity.exercise === true,
+      activity.learning === true,
+    ];
+
+    activity.totalGoals = 4;
+    activity.completedGoals = goals.filter(Boolean).length;
+
+    // Only award a streak when all four goals are complete.
+    if (activity.completedGoals === activity.totalGoals) {
+      // Find the previous day's record.
+      const previousDate = new Date(
+        `${today}T12:00:00+05:30`
+      );
+
+      previousDate.setDate(previousDate.getDate() - 1);
+
+      const yesterday = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(previousDate);
+
+      const previousActivity = await Activity.findOne({
+        userId: req.userId,
+        date: yesterday,
+      });
+
+      // If today's streak was already awarded, don't increment it again.
+      // Otherwise continue yesterday's streak or start a new one.
+      if (!activity.streakAwarded) {
+        activity.streak = previousActivity &&
+          previousActivity.completedGoals === previousActivity.totalGoals
+            ? Number(previousActivity.streak || 0) + 1
+            : 1;
+
+        activity.streakAwarded = true;
       }
-    );
+    } else {
+      // Preserve the streak already awarded for today.
+      // It will not increase until all goals are completed.
+    }
+
+    await activity.save();
 
     res.json({
       message: "Activity updated successfully",
@@ -132,6 +180,7 @@ router.put("/today", protect, async (req, res) => {
     });
   }
 });
+
 
 // =========================
 // GET PROGRESS STATISTICS
